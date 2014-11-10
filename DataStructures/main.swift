@@ -89,13 +89,15 @@ func testStack() {
     println(stack.pop())
     stack.pop()
     stack.traverse()
-    stack.pop() // Popping an empty stack should raise an exception
+    // Popping an empty stack should
+    // raise an exception
+    stack.pop()
 }
 
 func testHashTable() {
     let hashTable = HashTable()
     for i in 0...100 {
-        hashTable.addObject(i, forKey: "\(arc4random_uniform(10000))")
+        hashTable.addObject(i, forKey: "\(arc4random_uniform(1000))")
     }
     println(hashTable)
 }

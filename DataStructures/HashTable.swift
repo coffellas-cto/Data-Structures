@@ -8,6 +8,10 @@
 
 import Foundation
 
+// Change the value of this constant
+// to change the way hash table resizes
+let kHashTableAggressiveResize = true
+
 private class HashTableNode {
     var key: String
     var value: AnyObject
@@ -54,18 +58,15 @@ class HashTable: DebugPrintable {
     private var nodeCount: Int = 0 // Number of used nodes
     private var buckets: [HashTableBucket?] // Array of buckets
     
-    // ???
-    private var increment: Int = 0
-    
     var collisions = 0
 
     // MARK: Private Methods
-
+    
     private func hash(key: String) -> Int {
         var retVal: Int = 0
         for codeUnit in key.utf8 {
-            retVal += Int(codeUnit)
             retVal *= 127
+            retVal += Int(codeUnit)
             retVal %= 16908799
         }
         
@@ -83,9 +84,7 @@ class HashTable: DebugPrintable {
         let index = compress(hashVal, bucketsCount: bucketArray.count)
         if let bucket = bucketArray[index] {
             if bucket.firstNode != nil {
-                //if index == 0 {
-                    //println("Collision: to index \(index) from hash \(hashVal)")
-                //}
+                //println("Collision: to index \(index) from hash \(hashVal)")
                 collided = true
             }
             return bucket
@@ -95,10 +94,53 @@ class HashTable: DebugPrintable {
         return bucketArray[index]!
     }
     
-    private func growTable() {
+    private func newBucketCount(#grow: Bool) -> Int {
+        var retVal: Int = 0
+        if kHashTableAggressiveResize {
+            /**
+            1. This method works faster and results in less collisions.
+            But it eats more memory as number of buckets doubles
+            each time a hash table is supposed to grow.
+            **/
+            if grow {
+                retVal = buckets.count * 2
+            }
+        }
+        else {
+            /**
+            2. When using this method, a hash table grows slower.
+            This results in more collisions and weaker performance
+            than that of method #1. But it takes less space and number of
+            empty buckets decreases.
+            **/
+            if grow {
+                // Use Fibonacci series to compute
+                // next size for an array of buckets
+                var curNumber = 1
+                var prevNumber = 1
+                while curNumber <= buckets.count {
+                    let tmp = curNumber
+                    curNumber += prevNumber
+                    prevNumber = tmp
+                }
+                
+                retVal = curNumber
+            }
+        }
+        
+        return retVal
+    }
+    
+    private func resizeTable() {
+        var newBucketCount = buckets.count
+        
+        // If number of nodes exceeds 3/4 of number of buckets,
+        // increase number of buckets
         if buckets.count * 4 <= nodeCount * 3 {
-            let newBucketCount = buckets.count * 2 + 1
-            
+            newBucketCount = self.newBucketCount(grow: true)
+        }
+        
+        if newBucketCount != buckets.count {
             println("RESIZED FROM \(buckets.count) TO \(newBucketCount)")
             // Allocate an empty array of fixed size
             var newBuckets = [HashTableBucket?](count: newBucketCount, repeatedValue: nil)
@@ -140,7 +182,7 @@ class HashTable: DebugPrintable {
             nodeCount++
         }
         
-        self.growTable()
+        self.resizeTable()
     }
     
     // MARK: Life Cycle
@@ -150,22 +192,24 @@ class HashTable: DebugPrintable {
     
     // MARK: DebugPrintable Protocol Methods
     var debugDescription: String {
-        var retVal = "["
-        for bucket in buckets {
-            retVal += "\n[bucket]"
-            var node = bucket?.firstNode
-            while node != nil {
-                retVal += "->(\"\(node!.key)\": \(node!.value))"
-                node = node?.next
+        var retVal = "[hash_table]"
+        if nodeCount > 0 {
+            for bucket in buckets {
+                retVal += "\n[bucket]"
+                var node = bucket?.firstNode
+                while node != nil {
+                    retVal += "->(\"\(node!.key)\": \(node!.value))"
+                    node = node?.next
+                }
+            }
+            
+            retVal += "\n"
+            if collisions > 0 {
+                retVal += "Collisions: \(collisions)\n"
             }
         }
-        if nodeCount > 0 {
-            retVal += "\n"
-        }
-        if collisions > 0 {
-            retVal += "Collisions: \(collisions)\n"
-        }
-        retVal += "]"
+        
+        retVal += "[/hash_table]"
         return retVal
     }
     
