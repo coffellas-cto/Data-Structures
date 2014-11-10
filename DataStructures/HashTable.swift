@@ -79,7 +79,7 @@ class HashTable: DebugPrintable {
         return retVal
     }
     
-    private func bucketForKey(key: String, inout inBucketArray bucketArray: [HashTableBucket?], inout collided: Bool) -> HashTableBucket {
+    private func bucketForKey(key: String, inout inBucketArray bucketArray: [HashTableBucket?], inout collided: Bool, create: Bool = true) -> HashTableBucket? {
         let hashVal = hash(key)
         let index = compress(hashVal, bucketsCount: bucketArray.count)
         if let bucket = bucketArray[index] {
@@ -90,8 +90,12 @@ class HashTable: DebugPrintable {
             return bucket
         }
         
-        bucketArray[index] = HashTableBucket()
-        return bucketArray[index]!
+        if create {
+            bucketArray[index] = HashTableBucket()
+            return bucketArray[index]!
+        }
+        
+        return nil
     }
     
     private func newBucketCount(#grow: Bool) -> Int {
@@ -152,7 +156,7 @@ class HashTable: DebugPrintable {
                 var node = bucket?.firstNode
                 while node != nil {
                     var collided = false
-                    let bucket = bucketForKey(node!.key, inBucketArray: &newBuckets, collided: &collided)
+                    let bucket = bucketForKey(node!.key, inBucketArray: &newBuckets, collided: &collided) as HashTableBucket!
                     if collided {
                         collisions++
                     }
@@ -173,7 +177,7 @@ class HashTable: DebugPrintable {
     func addObject(object: AnyObject, forKey key: String) {
         let newNode = HashTableNode(key: key, value: object)
         var collided = false
-        let bucket = bucketForKey(newNode.key, inBucketArray: &buckets, collided: &collided)
+        let bucket = bucketForKey(newNode.key, inBucketArray: &buckets, collided: &collided) as HashTableBucket!
         if collided {
             collisions++
         }
@@ -183,6 +187,22 @@ class HashTable: DebugPrintable {
         }
         
         self.resizeTable()
+    }
+    
+    func objectForKey(key: String) -> AnyObject? {
+        var collided = false
+        if let bucket = bucketForKey(key, inBucketArray: &buckets, collided: &collided, create: false) {
+            var node = bucket.firstNode
+            while node != nil {
+                if node?.key == key {
+                    return node?.value
+                }
+                
+                node = node?.next
+            }
+        }
+        
+        return nil
     }
     
     // MARK: Life Cycle

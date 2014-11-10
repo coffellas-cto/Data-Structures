@@ -97,9 +97,13 @@ func testStack() {
 func testHashTable() {
     let hashTable = HashTable()
     for i in 0...100 {
-        hashTable.addObject(i, forKey: "\(arc4random_uniform(1000))")
+        hashTable.addObject(i, forKey: "\(i)")
     }
     println(hashTable)
+    println(hashTable.objectForKey("1"))
+    println(hashTable.objectForKey("33"))
+    println(hashTable.objectForKey("101"))
+    println(hashTable.objectForKey("100"))
 }
 
 func main() {
