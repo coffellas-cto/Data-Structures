@@ -57,8 +57,7 @@ private class HashTableBucket {
 class HashTable: DebugPrintable {
     private var nodeCount: Int = 0 // Number of used nodes
     private var buckets: [HashTableBucket?] // Array of buckets
-    
-    var collisions = 0
+    private var collisions = 0
 
     // MARK: Private Methods
     
@@ -107,7 +106,9 @@ class HashTable: DebugPrintable {
             each time a hash table is supposed to grow.
             **/
             if grow {
-                retVal = buckets.count * 2
+                retVal = buckets.count *  2
+            } else {
+                retVal = buckets.count / 2
             }
         }
         else {
@@ -129,7 +130,14 @@ class HashTable: DebugPrintable {
                 }
                 
                 retVal = curNumber
+            } else {
+                // TODO: Implement
+                NSException(name: NSInternalInconsistencyException, reason: "Method not implemented.", userInfo: nil).raise()
             }
+        }
+        
+        if retVal == 0 {
+            retVal = 1
         }
         
         return retVal
@@ -138,16 +146,21 @@ class HashTable: DebugPrintable {
     private func resizeTable() {
         var newBucketCount = buckets.count
         
-        // If number of nodes exceeds 3/4 of number of buckets,
+        // If number of nodes exceeds 4/3 of number of buckets,
         // increase number of buckets
         if buckets.count * 4 <= nodeCount * 3 {
             newBucketCount = self.newBucketCount(grow: true)
         }
+        else if nodeCount * 2 < buckets.count {
+            newBucketCount = self.newBucketCount(grow: false)
+        }
         
         if newBucketCount != buckets.count {
             println("RESIZED FROM \(buckets.count) TO \(newBucketCount)")
+            
             // Allocate an empty array of fixed size
             var newBuckets = [HashTableBucket?](count: newBucketCount, repeatedValue: nil)
+            
             // Recalculate hashes and assign
             // the existing nodes to new buckets
             nodeCount = 0
@@ -175,6 +188,7 @@ class HashTable: DebugPrintable {
     
     // MARK: Public Methods
     func addObject(object: AnyObject, forKey key: String) {
+        //println("Adding \(key)")
         let newNode = HashTableNode(key: key, value: object)
         var collided = false
         let bucket = bucketForKey(newNode.key, inBucketArray: &buckets, collided: &collided) as HashTableBucket!
@@ -186,7 +200,7 @@ class HashTable: DebugPrintable {
             nodeCount++
         }
         
-        self.resizeTable()
+        resizeTable()
     }
     
     func objectForKey(key: String) -> AnyObject? {
@@ -203,6 +217,40 @@ class HashTable: DebugPrintable {
         }
         
         return nil
+    }
+    
+    func removeObjectForKey(key: String) -> Bool {
+        //println("Removing \(key)")
+        var retVal = false
+        var collided = false
+        if let bucket = bucketForKey(key, inBucketArray: &buckets, collided: &collided, create: false) {
+            var node = bucket.firstNode
+            var prevNode: HashTableNode? = nil
+            while node != nil {
+                if node?.key == key {
+                    if prevNode != nil {
+                        prevNode?.next = node?.next
+                        collisions--
+                    } else {
+                        bucket.firstNode = node?.next
+                        if bucket.firstNode != nil {
+                            collisions--
+                        }
+                    }
+                    
+                    node?.next = nil
+                    retVal = true
+                    nodeCount--
+                    break
+                }
+                
+                prevNode = node
+                node = node?.next
+            }
+        }
+        
+        resizeTable()
+        return retVal
     }
     
     // MARK: Life Cycle
@@ -232,10 +280,4 @@ class HashTable: DebugPrintable {
         retVal += "[/hash_table]"
         return retVal
     }
-    
-    
-    
-    
-    
-    
 }

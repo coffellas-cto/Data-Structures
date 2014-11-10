@@ -96,14 +96,23 @@ func testStack() {
 
 func testHashTable() {
     let hashTable = HashTable()
-    for i in 0...100 {
-        hashTable.addObject(i, forKey: "\(i)")
+    for i in 0...20 {
+        hashTable.addObject(NSNumber(unsignedInt: arc4random_uniform(1000)), forKey: "\(i)")
     }
     println(hashTable)
-    println(hashTable.objectForKey("1"))
-    println(hashTable.objectForKey("33"))
-    println(hashTable.objectForKey("101"))
-    println(hashTable.objectForKey("100"))
+    for i in 0...16 {
+        hashTable.removeObjectForKey("\(i)")
+    }
+    println(hashTable)
+    for i in 21...40 {
+        hashTable.addObject(NSNumber(unsignedInt: arc4random_uniform(1000)), forKey: "\(i)")
+    }
+    println(hashTable)
+    
+    for i in 0...50 {
+        let obj: AnyObject? = hashTable.objectForKey("\(i)")
+        println("\(i): \(obj)")
+    }
 }
 
 func main() {
