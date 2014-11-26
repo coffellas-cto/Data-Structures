@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		9A4194D91A186FFC003011F1 /* BinaryHeap.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9A4194D81A186FFC003011F1 /* BinaryHeap.swift */; };
 		9A4430EF1A0F2308005EAC38 /* Stack.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9A4430EE1A0F2308005EAC38 /* Stack.swift */; };
 		9A4430F11A0F295B005EAC38 /* HashTable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9A4430F01A0F295B005EAC38 /* HashTable.swift */; };
 		9AE446261A0D98C0002381D8 /* main.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9AE446251A0D98C0002381D8 /* main.swift */; };
@@ -27,6 +28,7 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		9A4194D81A186FFC003011F1 /* BinaryHeap.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BinaryHeap.swift; sourceTree = "<group>"; };
 		9A4430EE1A0F2308005EAC38 /* Stack.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Stack.swift; sourceTree = "<group>"; };
 		9A4430F01A0F295B005EAC38 /* HashTable.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = HashTable.swift; sourceTree = "<group>"; };
 		9AE446221A0D98C0002381D8 /* DataStructures */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = DataStructures; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -69,6 +71,7 @@
 				9AE4462E1A0DA5FC002381D8 /* Queue.swift */,
 				9A4430EE1A0F2308005EAC38 /* Stack.swift */,
 				9A4430F01A0F295B005EAC38 /* HashTable.swift */,
+				9A4194D81A186FFC003011F1 /* BinaryHeap.swift */,
 				9AE446251A0D98C0002381D8 /* main.swift */,
 			);
 			path = DataStructures;
@@ -130,6 +133,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				9A4194D91A186FFC003011F1 /* BinaryHeap.swift in Sources */,
 				9A4430EF1A0F2308005EAC38 /* Stack.swift in Sources */,
 				9AE4462D1A0D995D002381D8 /* LinkedList.swift in Sources */,
 				9A4430F11A0F295B005EAC38 /* HashTable.swift in Sources */,
