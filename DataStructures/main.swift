@@ -115,8 +115,21 @@ func testHashTable() {
     }
 }
 
+func testBinarySearchTree() {
+    var bst = BinarySearchTree<Int>()
+    bst.insert(3)
+    bst.insert(7)
+    bst.insert(-10)
+    bst.insert(2)
+    bst.insert(100)
+    bst.insert(5)
+    bst.insert(0)
+    bst.insert(1)
+    println(bst)
+}
+
 func main() {
-    testHashTable()
+    testBinarySearchTree()
 }
 
 main()
