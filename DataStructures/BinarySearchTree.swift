@@ -44,6 +44,38 @@ class BinarySearchTree<T: Comparable>: DebugPrintable {
         return find(value, node: self.root)
     }
     
+    private func getMax(var node:BinaryTreeNode<T>!) -> T? {
+        if node == nil {
+            return nil
+        }
+        
+        while node.right != nil {
+            node = node.right
+        }
+        
+        return node.item
+    }
+    
+    func getMax() -> T? {
+        return getMax(self.root)
+    }
+    
+    private func getMin(var node:BinaryTreeNode<T>!) -> T? {
+        if node == nil {
+            return nil
+        }
+        
+        while node.left != nil {
+            node = node.left
+        }
+        
+        return node.item
+    }
+    
+    func getMin() -> T? {
+        return getMin(self.root)
+    }
+    
     func insert(value: T) {
         var newNode = BinaryTreeNode<T>(item: value)
         var node: BinaryTreeNode<T>! = self.root
@@ -112,7 +144,7 @@ class BinarySearchTree<T: Comparable>: DebugPrintable {
     var debugDescription: String {
         // Print in-order traversal
         var retVal = "[binary_search_tree]\n"
-        retVal += postOrderTraversal(self.root)
+        retVal += inOrderTraversal(self.root)
         retVal += "\n[/binary_search_tree]"
         return retVal
     }

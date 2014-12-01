@@ -121,11 +121,19 @@ func testBinarySearchTree() {
     bst.insert(7)
     bst.insert(-10)
     bst.insert(2)
+    bst.insert(3)
     bst.insert(100)
     bst.insert(5)
     bst.insert(0)
     bst.insert(1)
     println(bst)
+    println(bst.find(2))
+    println(bst.find(100))
+    println(bst.find(3))
+    println(bst.find(0))
+    println(bst.find(4))
+    println(bst.getMax())
+    println(bst.getMin())
 }
 
 func main() {
