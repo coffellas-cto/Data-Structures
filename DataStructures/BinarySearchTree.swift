@@ -26,8 +26,22 @@ private class BinaryTreeNode<T: Comparable> {
 class BinarySearchTree<T: Comparable>: DebugPrintable {
     private var root: BinaryTreeNode<T>?
     
+    private func find(value: T, node:BinaryTreeNode<T>!) -> T? {
+        if node == nil {
+            return nil
+        }
+        
+        if node.item == value {
+            return node.item
+        } else if value > node.item {
+            return find(value, node: node.right)
+        }
+        
+        return find(value, node: node.left)
+    }
+    
     func find(value: T) -> T? {
-        return nil
+        return find(value, node: self.root)
     }
     
     func insert(value: T) {
