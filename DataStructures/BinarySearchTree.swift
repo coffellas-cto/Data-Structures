@@ -8,7 +8,7 @@
 
 import Foundation
 
-private class BinaryTreeNode<T: Comparable> {
+private class BinaryTreeNode<T: Comparable>: DebugPrintable {
     var item: T
     init(item: T) {
         self.item = item
@@ -21,18 +21,23 @@ private class BinaryTreeNode<T: Comparable> {
     func visit() -> String {
         return "[\(item)]"
     }
+    
+    var debugDescription: String {
+        var retVal = "{\nitem:\(self.item)\nleft:\(self.left)\nright:\(self.right)\n}"
+        return retVal
+    }
 }
 
 class BinarySearchTree<T: Comparable>: DebugPrintable {
     private var root: BinaryTreeNode<T>?
     
-    private func find(value: T, node:BinaryTreeNode<T>!) -> T? {
+    private func find(value: T, node:BinaryTreeNode<T>!) -> BinaryTreeNode<T>? {
         if node == nil {
             return nil
         }
         
         if node.item == value {
-            return node.item
+            return node
         } else if value > node.item {
             return find(value, node: node.right)
         }
@@ -41,7 +46,7 @@ class BinarySearchTree<T: Comparable>: DebugPrintable {
     }
     
     func find(value: T) -> T? {
-        return find(value, node: self.root)
+        return find(value, node: self.root)?.item
     }
     
     func findSmallestGreaterThan(value: T) -> T? {
@@ -88,7 +93,7 @@ class BinarySearchTree<T: Comparable>: DebugPrintable {
         return getMax(self.root)
     }
     
-    private func getMin(var node:BinaryTreeNode<T>!) -> T? {
+    private func getMin(var node:BinaryTreeNode<T>!) -> BinaryTreeNode<T>!? {
         if node == nil {
             return nil
         }
@@ -97,11 +102,69 @@ class BinarySearchTree<T: Comparable>: DebugPrintable {
             node = node.left
         }
         
-        return node.item
+        return node
     }
     
     func getMin() -> T? {
-        return getMin(self.root)
+        return getMin(self.root).item
+    }
+    
+    private func removeNode(node: BinaryTreeNode<T>) {
+        
+        // TODO: Incomplete
+        
+        var hasLeft = node.left != nil
+        var hasRight = node.right != nil
+        if !hasLeft && !hasRight {
+            if node.parent == nil {
+                self.root = nil
+            } else if node.parent?.left === node {
+                node.parent?.left = nil
+            } else {
+                node.parent?.right = nil
+            }
+        }
+        else if !hasLeft && hasRight {
+            node.right?.parent = node.parent
+            if node === self.root {
+                self.root = node.right
+            }
+            
+            if node.parent != nil {
+                node.parent?.left = node.right
+            }
+            
+            node.parent = nil
+            node.right = nil
+        }
+        else if hasLeft && !hasRight {
+            node.left?.parent = node.parent
+            if node === self.root {
+                self.root = node.left
+            }
+            
+            if node.parent != nil {
+                node.parent?.right = node.left
+            }
+            
+            node.parent = nil
+            node.left = nil
+        }
+        else {
+            var minNode = self.getMin(node.right)
+            node.item = minNode.item
+            self.removeNode(minNode)
+        }
+    }
+    
+    func remove(value: T) -> T? {
+        var foundNode: BinaryTreeNode<T>? = self.find(value, node: self.root)
+        var retVal = foundNode?.item
+        if foundNode != nil {
+            self.removeNode(foundNode!)
+        }
+        
+        return retVal
     }
     
     func insert(value: T) {
