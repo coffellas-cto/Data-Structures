@@ -44,6 +44,34 @@ class BinarySearchTree<T: Comparable>: DebugPrintable {
         return find(value, node: self.root)
     }
     
+    func findSmallestGreaterThan(value: T) -> T? {
+        var node: BinaryTreeNode<T>! = self.root
+        var lastBigger: T? = nil
+        while node != nil {
+            if node.item > value {
+                lastBigger = node.item
+                node = node.left
+            } else {
+                node = node.right
+            }
+        }
+        return lastBigger
+    }
+    
+    func findLargestLessThan(value: T) -> T? {
+        var node: BinaryTreeNode<T>! = self.root
+        var lastSmaller: T? = nil
+        while node != nil {
+            if node.item >= value {
+                node = node.left
+            } else {
+                lastSmaller = node.item
+                node = node.right
+            }
+        }
+        return lastSmaller
+    }
+
     private func getMax(var node:BinaryTreeNode<T>!) -> T? {
         if node == nil {
             return nil
