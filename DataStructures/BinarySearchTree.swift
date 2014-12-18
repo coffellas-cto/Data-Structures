@@ -144,9 +144,9 @@ class BinarySearchTree<T: Comparable>: DebugPrintable {
             return
         }
         
-        let highestLessThanNode = self.getMin(node.right)
-        node.item = highestLessThanNode!.item
-        self.removeNode(highestLessThanNode!)
+        let lowestMoreThanNode = self.getMin(node.right)
+        node.item = lowestMoreThanNode!.item
+        self.removeNode(lowestMoreThanNode!)
     }
     
     func remove(value: T) -> T? {
