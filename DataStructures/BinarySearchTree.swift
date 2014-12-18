@@ -14,7 +14,7 @@ private class BinaryTreeNode<T: Comparable>: DebugPrintable {
         self.item = item
     }
     
-    var parent: BinaryTreeNode<T>?
+    weak var parent: BinaryTreeNode<T>?
     var left: BinaryTreeNode<T>?
     var right: BinaryTreeNode<T>?
     
@@ -77,7 +77,7 @@ class BinarySearchTree<T: Comparable>: DebugPrintable {
         return lastSmaller
     }
 
-    private func getMax(var node:BinaryTreeNode<T>!) -> T? {
+    private func getMax(var node:BinaryTreeNode<T>!) -> BinaryTreeNode<T>? {
         if node == nil {
             return nil
         }
@@ -86,14 +86,14 @@ class BinarySearchTree<T: Comparable>: DebugPrintable {
             node = node.right
         }
         
-        return node.item
+        return node
     }
     
     func getMax() -> T? {
-        return getMax(self.root)
+        return getMax(self.root)?.item
     }
     
-    private func getMin(var node:BinaryTreeNode<T>!) -> BinaryTreeNode<T>!? {
+    private func getMin(var node:BinaryTreeNode<T>!) -> BinaryTreeNode<T>? {
         if node == nil {
             return nil
         }
@@ -106,55 +106,47 @@ class BinarySearchTree<T: Comparable>: DebugPrintable {
     }
     
     func getMin() -> T? {
-        return getMin(self.root).item
+        return getMin(self.root)?.item
     }
     
     private func removeNode(node: BinaryTreeNode<T>) {
         
-        // TODO: Incomplete
+        let hasLeft = node.left != nil
+        let hasRight = node.right != nil
         
-        var hasLeft = node.left != nil
-        var hasRight = node.right != nil
         if !hasLeft && !hasRight {
-            if node.parent == nil {
-                self.root = nil
-            } else if node.parent?.left === node {
-                node.parent?.left = nil
+            if let parent = node.parent {
+                if parent.left === node {
+                    parent.left = nil
+                } else {
+                    parent.right = nil
+                }
             } else {
-                node.parent?.right = nil
-            }
-        }
-        else if !hasLeft && hasRight {
-            node.right?.parent = node.parent
-            if node === self.root {
-                self.root = node.right
+                root = nil
             }
             
-            if node.parent != nil {
-                node.parent?.left = node.right
+            return
+        }
+        
+        if (!hasLeft && hasRight) || (!hasRight && hasLeft) {
+            let childNode = hasRight ? node.right : node.left
+            childNode!.parent = node.parent
+            if let parent = node.parent {
+                if parent.left === node {
+                    parent.left = childNode
+                } else {
+                    parent.right = childNode
+                }
+            } else {
+                root = childNode
             }
             
-            node.parent = nil
-            node.right = nil
+            return
         }
-        else if hasLeft && !hasRight {
-            node.left?.parent = node.parent
-            if node === self.root {
-                self.root = node.left
-            }
-            
-            if node.parent != nil {
-                node.parent?.right = node.left
-            }
-            
-            node.parent = nil
-            node.left = nil
-        }
-        else {
-            var minNode = self.getMin(node.right)
-            node.item = minNode.item
-            self.removeNode(minNode)
-        }
+        
+        let highestLessThanNode = self.getMin(node.right)
+        node.item = highestLessThanNode!.item
+        self.removeNode(highestLessThanNode!)
     }
     
     func remove(value: T) -> T? {
