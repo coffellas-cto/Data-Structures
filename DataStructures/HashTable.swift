@@ -206,13 +206,13 @@ class HashTable: DebugPrintable {
     func objectForKey(key: String) -> AnyObject? {
         var collided = false
         if let bucket = bucketForKey(key, inBucketArray: &buckets, collided: &collided, create: false) {
-            var node = bucket.firstNode
+            var node: HashTableNode! = bucket.firstNode
             while node != nil {
-                if node?.key == key {
-                    return node?.value
+                if node.key == key {
+                    return node.value
                 }
                 
-                node = node?.next
+                node = node.next
             }
         }
         
@@ -225,12 +225,12 @@ class HashTable: DebugPrintable {
         var collided = false
         if let bucket = bucketForKey(key, inBucketArray: &buckets, collided: &collided, create: false) {
             var node: HashTableNode! = bucket.firstNode
-            var prevNode: HashTableNode? = nil
+            var prevNode: HashTableNode! = nil
             while node != nil {
                 if node.key == key {
                     retVal = node.value
                     if prevNode != nil {
-                        prevNode?.next = node.next
+                        prevNode.next = node.next
                         collisions--
                     } else {
                         bucket.firstNode = node.next
@@ -245,7 +245,7 @@ class HashTable: DebugPrintable {
                 }
                 
                 prevNode = node
-                node = node?.next
+                node = node.next
             }
         }
         
