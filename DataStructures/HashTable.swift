@@ -219,27 +219,27 @@ class HashTable: DebugPrintable {
         return nil
     }
     
-    func removeObjectForKey(key: String) -> Bool {
+    func removeObjectForKey(key: String) -> AnyObject? {
         //println("Removing \(key)")
-        var retVal = false
+        var retVal: AnyObject? = nil
         var collided = false
         if let bucket = bucketForKey(key, inBucketArray: &buckets, collided: &collided, create: false) {
-            var node = bucket.firstNode
+            var node: HashTableNode! = bucket.firstNode
             var prevNode: HashTableNode? = nil
             while node != nil {
-                if node?.key == key {
+                if node.key == key {
+                    retVal = node.value
                     if prevNode != nil {
-                        prevNode?.next = node?.next
+                        prevNode?.next = node.next
                         collisions--
                     } else {
-                        bucket.firstNode = node?.next
+                        bucket.firstNode = node.next
                         if bucket.firstNode != nil {
                             collisions--
                         }
                     }
                     
-                    node?.next = nil
-                    retVal = true
+                    node.next = nil
                     nodeCount--
                     break
                 }

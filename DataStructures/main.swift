@@ -101,7 +101,8 @@ func testHashTable() {
     }
     println(hashTable)
     for i in 0...16 {
-        hashTable.removeObjectForKey("\(i)")
+        print("Removing object for key: \(i) value: ")
+        println(hashTable.removeObjectForKey("\(i)"))
     }
     println(hashTable)
     for i in 21...40 {
@@ -280,7 +281,7 @@ func testBinarySearchTree() {
 }
 
 func main() {
-    testBinarySearchTree()
+    testHashTable()
 }
 
 main()
