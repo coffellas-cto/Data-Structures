@@ -6,3 +6,5 @@ Basic data structures in Swift
 - Stack.
 - Queue.
 - Hash table.
+- Min / Max binary heap.
+- Binary search tree.
